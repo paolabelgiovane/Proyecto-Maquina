@@ -56,7 +56,7 @@ class MaquinaExpendedora:
 
 
     # -------------------------------------------------------
-    # Funciones modulares para cargar productos
+    # Funciones para cargar productos
     # -------------------------------------------------------
 
     def cargar_lista_de_productos(self):
@@ -99,9 +99,9 @@ class MaquinaExpendedora:
             print("  Usando archivo local de respaldo para productos...")
             datos_crudos_de_productos = self.leer_json_local_de_productos()
 
-        # Si pudimos obtener datos (de internet o del archivo local), instanciamos los objetos
+        # Si pudimos obtener datos (de internet o del archivo local), creamos los objetos
         if datos_crudos_de_productos is not None:
-            self.instanciar_objetos_producto(datos_crudos_de_productos)
+            self.crear_objetos_producto(datos_crudos_de_productos)
         else:
             print("  ADVERTENCIA: No se pudieron cargar los productos por ninguna via.")
 
@@ -130,7 +130,7 @@ class MaquinaExpendedora:
         return datos_leidos_del_archivo
 
 
-    def instanciar_objetos_producto(self, lista_de_datos_de_productos):
+    def crear_objetos_producto(self, lista_de_datos_de_productos):
         # Recorre la lista de diccionarios y crea un objeto Producto por cada uno
         # Despues los guarda en self.lista_de_productos
 
@@ -154,12 +154,12 @@ class MaquinaExpendedora:
                 # Si al diccionario le falta alguna clave, avisamos y seguimos con el proximo
                 print(f"  ERROR: Al producto le falta la clave {clave_que_falta}. Se omite ese producto.")
 
-            except Exception as error_al_instanciar_producto:
-                print(f"  ERROR inesperado al crear un producto: {error_al_instanciar_producto}. Se omite.")
+            except Exception as error_al_crear_producto:
+                print(f"  ERROR inesperado al crear un producto: {error_al_crear_producto}. Se omite.")
 
 
     # -------------------------------------------------------
-    # Funciones modulares para cargar tarjetas (clientes)
+    # Funciones para cargar tarjetas (clientes)
     # -------------------------------------------------------
 
     def cargar_lista_de_tarjetas(self):
@@ -196,7 +196,7 @@ class MaquinaExpendedora:
             datos_crudos_de_clientes = self.leer_json_local_de_clientes()
 
         if datos_crudos_de_clientes is not None:
-            self.instanciar_objetos_tarjeta(datos_crudos_de_clientes)
+            self.crear_objetos_tarjeta(datos_crudos_de_clientes)
         else:
             print("  ADVERTENCIA: No se pudieron cargar los clientes por ninguna via.")
 
@@ -224,7 +224,7 @@ class MaquinaExpendedora:
         return datos_leidos_del_archivo
 
 
-    def instanciar_objetos_tarjeta(self, lista_de_datos_de_clientes):
+    def crear_objetos_tarjeta(self, lista_de_datos_de_clientes):
         # Recorre la lista de diccionarios y crea un objeto Tarjeta por cada uno
 
         for diccionario_de_un_cliente in lista_de_datos_de_clientes:
@@ -243,8 +243,8 @@ class MaquinaExpendedora:
             except KeyError as clave_que_falta:
                 print(f"  ERROR: A la tarjeta le falta la clave {clave_que_falta}. Se omite esa tarjeta.")
 
-            except Exception as error_al_instanciar_tarjeta:
-                print(f"  ERROR inesperado al crear una tarjeta: {error_al_instanciar_tarjeta}. Se omite.")
+            except Exception as error_al_crear_tarjeta:
+                print(f"  ERROR inesperado al crear una tarjeta: {error_al_crear_tarjeta}. Se omite.")
 
 
     # -------------------------------------------------------
@@ -280,6 +280,9 @@ class MaquinaExpendedora:
         la_maquina_esta_encendida = True
 
         while la_maquina_esta_encendida:
+
+            # Mostramos el catalogo de productos antes de pedir opciones
+            self.mostrar_catalogo()
 
             # Capturamos lo que escribe el usuario de forma robusta
             entrada_del_usuario = self.pedir_entrada_al_usuario()
@@ -410,3 +413,58 @@ class MaquinaExpendedora:
             print(f"  ERROR inesperado al buscar el producto: {error_al_buscar}")
 
         return producto_que_buscamos
+
+
+    # =======================================================
+    # LOGICA PARA MOSTRAR LA VITRINA
+    # =======================================================
+
+    def mostrar_catalogo(self):
+        # Dibuja la matriz de productos en pantalla (estilo ajedrez).
+        # Asumimos una maquina de 4 filas (A, B, C, D) y 3 columnas (1, 2, 3)
+        # porque en total tenemos 12 productos en el JSON.
+
+        print("")
+        print("+" + "-"*47 + "+")
+        print("|" + "VITRINA DE LA MAQUINA EXPENDEDORA".center(47) + "|")
+        print("+" + "-"*47 + "+")
+
+        letras_de_filas = ["A", "B", "C", "D"]
+        numeros_de_columnas = [1, 2, 3]
+
+        # Imprimimos el encabezado de las columnas
+        encabezado = "    "
+        for numero_columna in numeros_de_columnas:
+            # Centramos cada numero de columna en 12 espacios
+            encabezado += f"Columna {numero_columna}".center(14)
+        print(encabezado)
+
+        # Recorremos cada fila y cada columna de la matriz
+        for indice_fila, letra_fila in enumerate(letras_de_filas):
+            fila_texto = f" {letra_fila} |"
+            
+            for indice_col, numero_col in enumerate(numeros_de_columnas):
+                
+                producto_en_esta_posicion = None
+                
+                # Buscamos en toda la lista si algun producto tiene esta posicion
+                for producto_actual in self.lista_de_productos:
+                    posicion_del_producto = producto_actual.get_posicion()
+                    
+                    # Verificamos que tenga posicion y coincida con nuestra (fila, columna) actual
+                    if posicion_del_producto is not None:
+                        if posicion_del_producto == (indice_fila, indice_col):
+                            producto_en_esta_posicion = producto_actual
+                            break
+                            
+                # Verificamos si encontramos producto y si tiene stock > 0
+                if producto_en_esta_posicion is not None and producto_en_esta_posicion.get_stock() > 0:
+                    codigo_a_mostrar = producto_en_esta_posicion.get_codigo()
+                    fila_texto += f" {codigo_a_mostrar:^10} |"
+                else:
+                    # Si no hay producto, o el stock es 0, imprimimos espacio en blanco
+                    fila_texto += "            |"
+                    
+            print(fila_texto)
+            print("   +" + "-"*41 + "+")
+
