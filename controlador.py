@@ -56,7 +56,7 @@ class MaquinaExpendedora:
 
 
     # -------------------------------------------------------
-    # Funciones para cargar productos
+    # Funciones modulares para cargar productos
     # -------------------------------------------------------
 
     def cargar_lista_de_productos(self):
@@ -99,9 +99,9 @@ class MaquinaExpendedora:
             print("  Usando archivo local de respaldo para productos...")
             datos_crudos_de_productos = self.leer_json_local_de_productos()
 
-        # Si pudimos obtener datos (de internet o del archivo local), creamos los objetos
+        # Si pudimos obtener datos (de internet o del archivo local), instanciamos los objetos
         if datos_crudos_de_productos is not None:
-            self.crear_objetos_producto(datos_crudos_de_productos)
+            self.instanciar_objetos_producto(datos_crudos_de_productos)
         else:
             print("  ADVERTENCIA: No se pudieron cargar los productos por ninguna via.")
 
@@ -130,7 +130,7 @@ class MaquinaExpendedora:
         return datos_leidos_del_archivo
 
 
-    def crear_objetos_producto(self, lista_de_datos_de_productos):
+    def instanciar_objetos_producto(self, lista_de_datos_de_productos):
         # Recorre la lista de diccionarios y crea un objeto Producto por cada uno
         # Despues los guarda en self.lista_de_productos
 
@@ -154,12 +154,12 @@ class MaquinaExpendedora:
                 # Si al diccionario le falta alguna clave, avisamos y seguimos con el proximo
                 print(f"  ERROR: Al producto le falta la clave {clave_que_falta}. Se omite ese producto.")
 
-            except Exception as error_al_crear_producto:
-                print(f"  ERROR inesperado al crear un producto: {error_al_crear_producto}. Se omite.")
+            except Exception as error_al_instanciar_producto:
+                print(f"  ERROR inesperado al crear un producto: {error_al_instanciar_producto}. Se omite.")
 
 
     # -------------------------------------------------------
-    # Funciones para cargar tarjetas (clientes)
+    # Funciones modulares para cargar tarjetas (clientes)
     # -------------------------------------------------------
 
     def cargar_lista_de_tarjetas(self):
@@ -196,7 +196,7 @@ class MaquinaExpendedora:
             datos_crudos_de_clientes = self.leer_json_local_de_clientes()
 
         if datos_crudos_de_clientes is not None:
-            self.crear_objetos_tarjeta(datos_crudos_de_clientes)
+            self.instanciar_objetos_tarjeta(datos_crudos_de_clientes)
         else:
             print("  ADVERTENCIA: No se pudieron cargar los clientes por ninguna via.")
 
@@ -224,7 +224,7 @@ class MaquinaExpendedora:
         return datos_leidos_del_archivo
 
 
-    def crear_objetos_tarjeta(self, lista_de_datos_de_clientes):
+    def instanciar_objetos_tarjeta(self, lista_de_datos_de_clientes):
         # Recorre la lista de diccionarios y crea un objeto Tarjeta por cada uno
 
         for diccionario_de_un_cliente in lista_de_datos_de_clientes:
@@ -243,8 +243,8 @@ class MaquinaExpendedora:
             except KeyError as clave_que_falta:
                 print(f"  ERROR: A la tarjeta le falta la clave {clave_que_falta}. Se omite esa tarjeta.")
 
-            except Exception as error_al_crear_tarjeta:
-                print(f"  ERROR inesperado al crear una tarjeta: {error_al_crear_tarjeta}. Se omite.")
+            except Exception as error_al_instanciar_tarjeta:
+                print(f"  ERROR inesperado al crear una tarjeta: {error_al_instanciar_tarjeta}. Se omite.")
 
 
     # -------------------------------------------------------
@@ -298,8 +298,7 @@ class MaquinaExpendedora:
                 # El usuario dejo la linea en blanco -> quiere hacer una compra
                 print("")
                 print(">> Modo VENTA activado.")
-                # Por ahora avisamos que esta funcion viene en el proximo avance
-                print("   (La logica de venta se implementa en el la proxima entrega)")
+                self.procesar_venta()
 
             elif entrada_del_usuario == "RS":
                 # El usuario escribio RS -> quiere hacer un restock
@@ -467,4 +466,100 @@ class MaquinaExpendedora:
                     
             print(fila_texto)
             print("   +" + "-"*41 + "+")
+
+
+    # =======================================================
+    # LOGICA DE VENTA DE PRODUCTOS
+    # =======================================================
+
+    def procesar_venta(self):
+        # Primero pedimos el codigo del producto a comprar
+        codigo_ingresado_por_usuario = input("  Ingrese el codigo del producto que desea comprar: ")
+        
+        producto_encontrado_para_vender = self.buscar_producto_por_codigo(codigo_ingresado_por_usuario)
+        
+        if producto_encontrado_para_vender is None:
+            print(f"  ERROR: El codigo '{codigo_ingresado_por_usuario}' no existe.")
+            return
+            
+        if not producto_encontrado_para_vender.hay_stock():
+            print("  ERROR: Producto sin stock por el momento.")
+            return
+
+        # Solicitamos el numero de tarjeta al cliente
+        texto_de_la_tarjeta = input("  Ingrese su numero de tarjeta para pagar: ")
+        
+        # Aplicamos la funcion hash de Python como nos pidieron.
+        # Intentamos convertir a int primero, porque si el JSON tiene
+        # el ID como numero, el hash(int) coincidira con ese numero.
+        try:
+            numero_de_tarjeta_entero = int(texto_de_la_tarjeta)
+            hash_generado_de_la_tarjeta = hash(numero_de_tarjeta_entero)
+        except ValueError:
+            # Si escribio letras, le aplicamos hash al string directo
+            hash_generado_de_la_tarjeta = hash(texto_de_la_tarjeta)
+            
+        # Comparamos el hash con los hash_numero de los clientes cargados
+        tarjeta_del_cliente_encontrada = None
+        
+        for tarjeta_actual in self.lista_de_tarjetas:
+            if tarjeta_actual.get_hash_numero() == hash_generado_de_la_tarjeta:
+                tarjeta_del_cliente_encontrada = tarjeta_actual
+                break
+                
+        if tarjeta_del_cliente_encontrada is None:
+            print("  ERROR: Tarjeta invalida o no registrada en el sistema.")
+            return
+            
+        # Revisamos si tiene saldo suficiente
+        precio_del_producto = producto_encontrado_para_vender.get_precio()
+        
+        if not tarjeta_del_cliente_encontrada.tiene_saldo(precio_del_producto):
+            print("  ERROR: Saldo insuficiente en la tarjeta.")
+            return
+            
+        # Pedimos confirmacion de compra
+        print("")
+        print(f"  Producto seleccionado: {producto_encontrado_para_vender.get_nombre()}")
+        print(f"  Precio a cobrar: ${precio_del_producto}")
+        print(f"  Saldo actual en tarjeta: ${tarjeta_del_cliente_encontrada.get_saldo()}")
+        respuesta_de_confirmacion = input("  ¿Confirma la compra? (S/N): ")
+        
+        # Le sacamos los espacios y la pasamos a mayuscula para que sea mas facil validar
+        if respuesta_de_confirmacion.strip().upper() == "S":
+            
+            # 1. Aplicamos descontar_saldo()
+            tarjeta_del_cliente_encontrada.descontar_saldo(precio_del_producto)
+            
+            # 2. Descontamos el stock del producto
+            stock_actual = producto_encontrado_para_vender.get_stock()
+            producto_encontrado_para_vender.set_stock(stock_actual - 1)
+            
+            # 3. Imprimimos el mensaje de la variable despedida
+            print("")
+            print("  >> COMPRA EXITOSA <<")
+            print(f"  {producto_encontrado_para_vender.get_despedida()}")
+            print(f"  Su nuevo saldo es: ${tarjeta_del_cliente_encontrada.get_saldo()}")
+            
+            # 4. Escribimos la transaccion en el archivo usando la clase Venta
+            try:
+                # Importamos Venta solo cuando la necesitamos, para evitar referencias circulares
+                from operaciones import Venta
+                
+                # Creamos el objeto Venta (cantidad siempre es 1 en este caso)
+                nueva_venta = Venta(producto_encontrado_para_vender, tarjeta_del_cliente_encontrada, 1)
+                
+                # Obtenemos el texto listo llamando al metodo que armamos antes
+                texto_para_guardar = nueva_venta.guardar_venta_txt()
+                
+                # Abrimos el archivo en modo "a" (append) para no borrar lo anterior
+                archivo_de_ventas = open("ventas.txt", "a", encoding="utf-8")
+                archivo_de_ventas.write(texto_para_guardar)
+                archivo_de_ventas.close()
+                
+            except Exception as error_al_guardar_venta:
+                print(f"  ERROR interno: No se pudo guardar el registro de la venta. Detalles: {error_al_guardar_venta}")
+                
+        else:
+            print("  Compra cancelada por el usuario.")
 

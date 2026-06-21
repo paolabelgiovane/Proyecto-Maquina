@@ -1,13 +1,21 @@
+# -----------------------------------------------
 # Archivo: main.py
 # Responsables: Paola Belgiovane e Ivana Lopez
-# Descripcion: Archivo de prueba para correr el menu principal
+# Descripcion: Ejecucion del sistema
+# -----------------------------------------------
 
 from controlador import MaquinaExpendedora
 
 def principal():
-    print("Iniciando pruebas de la maquina...")
+    print("Iniciando el sistema de la Maquina Expendedora...")
+    
+    # Instanciamos la maquina
     mi_maquina = MaquinaExpendedora()
+    
+    # Encendemos el motor
     mi_maquina.iniciar()
+    
+    print("Programa finalizado.")
 
 if __name__ == "__main__":
     principal()

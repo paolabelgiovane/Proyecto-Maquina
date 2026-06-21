@@ -9,7 +9,7 @@
 
 class Tarjeta:
 
-    # Aqui recibimos los datos y los guardamos
+    # El __init__ recibe los datos del JSON y los guarda
     # El campo "id" del JSON lo guardamos como hash_numero
     # El campo "saldo" del JSON lo guardamos como saldo
     def __init__(self, hash_numero_de_la_tarjeta, saldo_de_la_tarjeta):

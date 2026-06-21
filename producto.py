@@ -9,7 +9,7 @@
 
 class Producto:
 
-    # Aqui recibimos los datos y los guardamos
+    # El __init__ recibe los datos del JSON y los guarda como atributos
     def __init__(self, codigo_del_producto, nombre_del_producto, precio_del_producto, despedida_del_producto):
 
         # Estos datos vienen del JSON (cod, prod, precio, despedida)
