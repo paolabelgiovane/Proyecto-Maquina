@@ -304,8 +304,7 @@ class MaquinaExpendedora:
                 # El usuario escribio RS -> quiere hacer un restock
                 print("")
                 print(">> Modo RESTOCK activado.")
-                # Por ahora avisamos que esta funcion viene en el proximo avance
-                print("   (La logica de restock se implementa en el la proxima entrega)")
+                self.realizar_restock()
 
             elif entrada_del_usuario == "RP":
                 # El usuario escribio RP -> quiere ver el reporte
@@ -562,4 +561,140 @@ class MaquinaExpendedora:
                 
         else:
             print("  Compra cancelada por el usuario.")
+
+
+    # =======================================================
+    # LOGICA DE REABASTECIMIENTO (RESTOCK)
+    # =======================================================
+
+    def realizar_restock(self):
+        # Este metodo despliega el menu de reabastecimiento
+        
+        en_menu_de_restock = True
+        
+        while en_menu_de_restock:
+            print("\n" + "=" * 40)
+            print("         MENU DE RESTOCK")
+            print("=" * 40)
+            print("  1. Asignar/Cambiar producto en vitrina")
+            print("  2. Actualizar existencia (Agregar stock)")
+            print("  3. Salir del menu de restock")
+            print("=" * 40)
+            
+            opcion_elegida = input("  Seleccione una opcion (1-3): ")
+            
+            if opcion_elegida == "1":
+                self.asignar_posicion_a_producto()
+                
+            elif opcion_elegida == "2":
+                self.agregar_stock_a_producto()
+                
+            elif opcion_elegida == "3":
+                print("  Saliendo del menu de restock...")
+                en_menu_de_restock = False
+                
+            else:
+                print("  ERROR: Opcion invalida. Intente de nuevo.")
+
+
+    def asignar_posicion_a_producto(self):
+        # Le pide al usuario el codigo y le asigna una fila y columna
+        codigo_del_producto = input("\n  Ingrese el codigo del producto a posicionar: ")
+        producto_a_modificar = self.buscar_producto_por_codigo(codigo_del_producto)
+        
+        if producto_a_modificar is not None:
+            print("  La vitrina tiene filas A, B, C, D y columnas 1, 2, 3.")
+            letra_de_fila = input("  Ingrese la letra de la fila (ej. A): ").strip().upper()
+            numero_de_columna = input("  Ingrese el numero de la columna (ej. 1): ").strip()
+            
+            # Mapeamos la letra a un indice numerico (0-3) para nuestro iterador interno
+            diccionario_de_filas = {"A": 0, "B": 1, "C": 2, "D": 3}
+            
+            try:
+                # Validamos que lo ingresado exista en nuestro mapa y en las columnas validas
+                if letra_de_fila in diccionario_de_filas and numero_de_columna in ["1", "2", "3"]:
+                    indice_fila = diccionario_de_filas[letra_de_fila]
+                    indice_col = int(numero_de_columna) - 1  # restamos 1 para manejar indices desde 0 pero esto no es estrictamente necesario si usamos el numero directo, pero es mejor asi.
+                    
+                    # Guardamos la tupla (indice_fila, indice_col)
+                    producto_a_modificar.set_posicion((indice_fila, int(numero_de_columna)))
+                    
+                    print(f"  EXITO: Producto '{producto_a_modificar.get_nombre()}' posicionado en {letra_de_fila}{numero_de_columna}.")
+                    self.guardar_inventario_en_archivo_de_texto()
+                else:
+                    print("  ERROR: Fila o columna fuera de rango.")
+            except Exception as error_posicion:
+                print(f"  ERROR inesperado al posicionar: {error_posicion}")
+                
+        else:
+            print("  ERROR: Producto no encontrado en la lista.")
+
+
+    def agregar_stock_a_producto(self):
+        # Aumenta el stock de un producto y guarda el registro
+        codigo_del_producto = input("\n  Ingrese el codigo del producto a reabastecer: ")
+        producto_a_reabastecer = self.buscar_producto_por_codigo(codigo_del_producto)
+        
+        if producto_a_reabastecer is not None:
+            cantidad_en_texto = input("  Ingrese la cantidad de unidades a agregar: ")
+            try:
+                cantidad_a_sumar = int(cantidad_en_texto)
+                
+                if cantidad_a_sumar > 0:
+                    stock_viejo = producto_a_reabastecer.get_stock()
+                    producto_a_reabastecer.set_stock(stock_viejo + cantidad_a_sumar)
+                    
+                    print(f"  EXITO: Stock actualizado. Ahora hay {producto_a_reabastecer.get_stock()} unidades.")
+                    
+                    # Registramos el restock usando nuestra clase Restock
+                    from operaciones import Restock
+                    nuevo_registro_restock = Restock(producto_a_reabastecer, cantidad_a_sumar)
+                    texto_para_archivo = nuevo_registro_restock.guardar_restock_txt()
+                    
+                    # Guardamos en restock.txt (modo append)
+                    archivo_de_restock = open("restock.txt", "a", encoding="utf-8")
+                    archivo_de_restock.write(texto_para_archivo)
+                    archivo_de_restock.close()
+                    
+                    # Guardamos tambien el estado final del inventario
+                    self.guardar_inventario_en_archivo_de_texto()
+                    
+                else:
+                    print("  ERROR: La cantidad debe ser un numero mayor a cero.")
+                    
+            except ValueError:
+                print("  ERROR: Debe ingresar un numero entero valido.")
+        else:
+            print("  ERROR: Producto no encontrado.")
+
+
+    def guardar_inventario_en_archivo_de_texto(self):
+        # Este metodo guarda todo el inventario de nuevo en el archivo productos.json
+        # para que en futuras ejecuciones la maquina "recuerde" posiciones y stock.
+        
+        lista_de_diccionarios_para_json = []
+        
+        for producto_actual in self.lista_de_productos:
+            # Creamos un diccionario a mano para cada producto
+            diccionario_del_producto = {
+                "cod": producto_actual.get_codigo(),
+                "prod": producto_actual.get_nombre(),
+                "precio": producto_actual.get_precio(),
+                "despedida": producto_actual.get_despedida(),
+                "stock": producto_actual.get_stock(),
+                "posicion": producto_actual.get_posicion()
+            }
+            lista_de_diccionarios_para_json.append(diccionario_del_producto)
+            
+        try:
+            # Sobreescribimos el archivo local de productos (modo "w")
+            archivo_local_inventario = open("productos.json", "w", encoding="utf-8")
+            # Usamos indent=4 para que quede bonito y legible
+            json.dump(lista_de_diccionarios_para_json, archivo_local_inventario, indent=4)
+            archivo_local_inventario.close()
+            
+            print("  (Inventario guardado en archivo local exitosamente para futuras ejecuciones)")
+            
+        except Exception as error_al_escribir_json:
+            print(f"  ERROR interno al guardar inventario: {error_al_escribir_json}")
 
