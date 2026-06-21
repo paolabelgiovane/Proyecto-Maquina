@@ -256,3 +256,157 @@ class MaquinaExpendedora:
 
     def get_lista_de_tarjetas(self):
         return self.lista_de_tarjetas
+
+
+    # =======================================================
+    # LOGICA DEL BUCLE PRINCIPAL Y MENU
+    # =======================================================
+
+    def iniciar(self):
+        # Este es el motor principal de la maquina expendedora.
+        # El programa vive aca adentro hasta que el usuario escriba "salir".
+
+        print("")
+        print("=" * 50)
+        print("   BIENVENIDO A LA MAQUINA EXPENDEDORA")
+        print("=" * 50)
+        print("  Ingrese un CODIGO de producto para ver el precio.")
+        print("  Deje la linea en BLANCO y presione Enter para comprar.")
+        print("  Escriba  RS  para hacer un restock.")
+        print("  Escriba  RP  para ver el reporte.")
+        print("  Escriba  salir  para apagar la maquina.")
+        print("=" * 50)
+
+        la_maquina_esta_encendida = True
+
+        while la_maquina_esta_encendida:
+
+            # Capturamos lo que escribe el usuario de forma robusta
+            entrada_del_usuario = self.pedir_entrada_al_usuario()
+
+            # Ahora revisamos que escribio y enrutamos a la funcion correcta
+            if entrada_del_usuario == "salir":
+                # El usuario quiere apagar la maquina
+                print("")
+                print("Apagando la maquina... Hasta luego!")
+                la_maquina_esta_encendida = False
+
+            elif entrada_del_usuario == "":
+                # El usuario dejo la linea en blanco -> quiere hacer una compra
+                print("")
+                print(">> Modo VENTA activado.")
+                # Por ahora avisamos que esta funcion viene en el proximo avance
+                print("   (La logica de venta se implementa en el la proxima entrega)")
+
+            elif entrada_del_usuario == "RS":
+                # El usuario escribio RS -> quiere hacer un restock
+                print("")
+                print(">> Modo RESTOCK activado.")
+                # Por ahora avisamos que esta funcion viene en el proximo avance
+                print("   (La logica de restock se implementa en el la proxima entrega)")
+
+            elif entrada_del_usuario == "RP":
+                # El usuario escribio RP -> quiere ver el reporte
+                print("")
+                print(">> Modo REPORTE activado.")
+                # Por ahora avisamos que esta funcion viene en el proximo avance
+                print("   (La logica de reporte se implementa en el la proxima entrega)")
+
+            else:
+                # Asumimos que el usuario escribio un codigo de producto
+                # Llamamos a consultar_precio() con lo que escribio
+                self.consultar_precio(entrada_del_usuario)
+
+
+    def pedir_entrada_al_usuario(self):
+        # Esta funcion se encarga de pedir el input y manejarlo de forma segura.
+        # La separamos en su propia funcion para mantener iniciar() limpio.
+
+        entrada_valida = None
+
+        while entrada_valida is None:
+            try:
+                print("")
+                texto_del_prompt = input("Ingrese opcion (codigo / ENTER / RS / RP / salir): ")
+
+                # Le sacamos los espacios al principio y al final por si el usuario
+                # apreta la barra espaciadora de mas, pero SIN convertir a mayusculas
+                # todavia, porque el codigo de producto podria ser minuscula
+                texto_limpio = texto_del_prompt.strip()
+
+                # Convertimos a mayusculas solo los comandos especiales
+                # Si escribio "rs" o "rp" en minuscula, igual lo aceptamos
+                if texto_limpio.lower() == "rs":
+                    entrada_valida = "RS"
+                elif texto_limpio.lower() == "rp":
+                    entrada_valida = "RP"
+                elif texto_limpio.lower() == "salir":
+                    entrada_valida = "salir"
+                else:
+                    # Para el codigo de producto y el ENTER en blanco, lo devolvemos como esta
+                    entrada_valida = texto_limpio
+
+            except EOFError:
+                # Esto pasa si el programa se ejecuta sin una terminal real (ej: redireccion)
+                print("ERROR: No se pudo leer la entrada. Cerrando maquina...")
+                entrada_valida = "salir"
+
+            except KeyboardInterrupt:
+                # El usuario aperto Ctrl+C
+                print("")
+                print("Interrupcion detectada. Cerrando maquina...")
+                entrada_valida = "salir"
+
+        return entrada_valida
+
+
+    def consultar_precio(self, codigo_ingresado_por_el_usuario):
+        # Busca un producto en la lista por su codigo y muestra el precio.
+        # Si no lo encuentra, avisa al usuario.
+
+        producto_encontrado = self.buscar_producto_por_codigo(codigo_ingresado_por_el_usuario)
+
+        if producto_encontrado is not None:
+            # Mostramos la info del producto
+            nombre_del_producto_encontrado = producto_encontrado.get_nombre()
+            precio_del_producto_encontrado = producto_encontrado.get_precio()
+            stock_del_producto_encontrado  = producto_encontrado.get_stock()
+
+            print("")
+            print(f"  Producto: {nombre_del_producto_encontrado}")
+            print(f"  Precio:   ${precio_del_producto_encontrado}")
+
+            # Tambien avisamos si hay stock o no
+            if producto_encontrado.hay_stock():
+                print(f"  Stock:    {stock_del_producto_encontrado} unidades disponibles")
+            else:
+                print("  Stock:    SIN STOCK")
+
+        else:
+            # El codigo que escribio el usuario no existe en la lista
+            print("")
+            print(f"  ERROR: No se encontro ningun producto con el codigo '{codigo_ingresado_por_el_usuario}'.")
+            print("  Revise el codigo e intente de nuevo.")
+
+
+    def buscar_producto_por_codigo(self, codigo_a_buscar):
+        # Recorre la lista de productos buscando uno que tenga ese codigo.
+        # Si lo encuentra, devuelve el objeto Producto.
+        # Si no lo encuentra, devuelve None.
+
+        producto_que_buscamos = None
+
+        try:
+            for producto_de_la_lista in self.lista_de_productos:
+                codigo_del_producto_actual = producto_de_la_lista.get_codigo()
+
+                # Comparamos en mayusculas para que no importe si el usuario
+                # escribio el codigo en minuscula o mayuscula
+                if str(codigo_del_producto_actual).upper() == str(codigo_a_buscar).upper():
+                    producto_que_buscamos = producto_de_la_lista
+                    break   # ya lo encontramos, no hace falta seguir buscando
+
+        except Exception as error_al_buscar:
+            print(f"  ERROR inesperado al buscar el producto: {error_al_buscar}")
+
+        return producto_que_buscamos
