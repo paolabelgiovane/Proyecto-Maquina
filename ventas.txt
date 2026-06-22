@@ -1,0 +1,16 @@
+========================================
+REGISTRO DE VENTA
+Fecha y hora: 21/06/2026 20:48:07
+Producto: Coca-Cola Classic 355 ml (Cod: CocaC)
+Cantidad vendida: 1
+Total cobrado: $1.1
+Tarjeta del cliente: 971972920886152672
+========================================
+========================================
+REGISTRO DE VENTA
+Fecha y hora: 21/06/2026 20:48:29
+Producto: Coca-Cola Classic 355 ml (Cod: CocaC)
+Cantidad vendida: 1
+Total cobrado: $1.1
+Tarjeta del cliente: 971972920886152672
+========================================

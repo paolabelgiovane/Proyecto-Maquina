@@ -1,4 +1,4 @@
-CocaC;Coca-Cola Classic 355 ml;1.1;¡Disfruta de tu Coca-Cola bien fría!;10;0;0
+CocaC;Coca-Cola Classic 355 ml;1.1;¡Disfruta de tu Coca-Cola bien fría!;12;0;0
 CocaZ;Coca-Cola Zero 355 ml;1.2;¡Más sabor, menos azucar!;0;-1;-1
 CocaL;Coca-Cola Light 355 ml;1.2;¡Este es tu sabor, disfrútalo!;0;-1;-1
 Fanta;Fanta Naranja 355 ml;1.2;¡Fanta Naranja es un Hit!;5;0;2

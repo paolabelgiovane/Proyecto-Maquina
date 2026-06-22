@@ -1,0 +1,12 @@
+----------------------------------------
+REGISTRO DE RESTOCK
+Fecha y hora: 21/06/2026 20:39:04
+Producto: Coca-Cola Classic 355 ml (Cod: CocaC)
+Cantidad repuesta: 3
+----------------------------------------
+----------------------------------------
+REGISTRO DE RESTOCK
+Fecha y hora: 21/06/2026 20:50:43
+Producto: Coca-Cola Classic 355 ml (Cod: CocaC)
+Cantidad repuesta: 1
+----------------------------------------
