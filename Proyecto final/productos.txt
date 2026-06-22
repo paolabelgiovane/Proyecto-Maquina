@@ -1,0 +1,51 @@
+CocaC;Coca-Cola Classic 355 ml;1.1;¡Disfruta de tu Coca-Cola bien fría!;10;0;0
+CocaZ;Coca-Cola Zero 355 ml;1.2;¡Más sabor, menos azucar!;0;-1;-1
+CocaL;Coca-Cola Light 355 ml;1.2;¡Este es tu sabor, disfrútalo!;0;-1;-1
+Fanta;Fanta Naranja 355 ml;1.2;¡Fanta Naranja es un Hit!;5;0;2
+Chint;Chinotto 355 ml;1.1;¡Disfruta la bebida cítrica número uno en el mundo!;0;-1;-1
+Aguak;Aguakina Schweppes 355 ml;1.0;Tómate tu tiempo con Schweppes;0;-1;-1
+PowrA;Powerade 500 ml;1.5;¡La pausa es poder con Powerade!;0;-1;-1
+Nevada;Nevada 500 ml;0.7;¡Nevada es el agua mineral!;6;3;2
+Pepsi;Pepsi lata 355 ml;1.1;Pepsi: ¡Es lo que te gusta!;10;0;1
+PepsL;Pepsi light 355 ml;1.1;Pepsi Light: disfruta sin calorías;0;-1;-1
+PepsiZ;Pepsi Cero Azucar;1.1;¡Cero Azucar: cero calorías!;0;-1;-1
+Goldn;Golden naranja lata 355 ml;1.1;Golden: ¡El sabor de tu diversión!;0;-1;-1
+SvnUp;SevenUp 355 ml;1.2;7UP: mereces lo mejor;0;-1;-1
+Malta;Maltín Polar lata;1.0;¡Maltín Polar: Energía natural!;8;3;0
+Gator;Gatorade 500 ml;1.5;Gatorade: ¡nada funciona mejor!;7;3;1
+Minalba;Minalba 500 ml;0.65;Minalba: Agua pura de manantial;0;-1;-1
+Ruffl;Ruffles Deli Size;2.0;Disfruta tus Ruffles onduladas;8;1;0
+Dorit;Doritos Deli Size;2.25;Doritos para los atrevidos;6;1;1
+Cheet;Cheetos Deli Size;1.75;Es cosa de Cheetos;5;1;2
+Lays;Lays Deli Size;1.5;A que no puedes comer solo una;0;-1;-1
+Munch;Munchies;0.75;¡Qué munchy este momento!;0;-1;-1
+Platn;Platanitos Caribas;0.75;Disfruta Platanitos Caribas por sus sabor!;0;-1;-1
+Yuqts;Yuquitas Caribas;0.75;Disfruta Yuquitas Caribas por su sabor!;0;-1;-1
+NatuC;NatuChips originales;0.85;Disfruta el verdadero plátano original;0;-1;-1
+NatuL;NatuChips con limón;0.85;Disfruta el verdadero sabor a limón;0;-1;-1
+Savoy;Chocolate Savoy 100 g;0.6;¡Savoy con sabor venezolano!;12;2;0
+Savo2;Chocolate Savoy 130 g;0.85;¡Savoy con sabor venezolano!;0;-1;-1
+Savo3;Chocolate Savoy 150 g;1.0;¡Savoy con sabor venezolano!;0;-1;-1
+Savo4;Chocolate Savoy 175 g;1.25;¡Savoy con sabor venezolano!;0;-1;-1
+Savo5;Savoy Carré;1.5;¡Savoy con sabor venezolano!;0;-1;-1
+Hrshy;Barra Hershey's 43 g;0.5;Hershey's: El sabor de los buenos recuerdos;10;2;2
+Hrsh2;Barra Hershey's 74 g;1.0;Hershey's: El sabor de los buenos recuerdos;0;-1;-1
+Hrsh3;Barra Hershey's 124 g;1.5;Hershey's: El sabor de los buenos recuerdos;0;-1;-1
+KitKt;Barra KitKat;1.75;¡Date un break, date un KitKat!;15;2;1
+Reese;Reese's Peanut Butter Cups;2.25;¡Todo por un Reese's!;0;-1;-1
+CnchF;Cronch Flakes lonchera;1.6;Cronch Flakes es enriquecido con 8 vitaminas y hierro;0;-1;-1
+Azucr;Hojuelas Azucaradas lonchera;1.75;Crocantes y deliciosas hojuelas de maíz azucaradas;0;-1;-1
+ChocS;Choco Safari lonchera;1.75;Formas divertidas de animales;0;-1;-1
+ChocC;Choco Cronch lonchera;1.75;Cereal expandido con sabor a chocolate;0;-1;-1
+Abcts;Abcitoos Lonchera;1.7;Crocante y delicioso con divertidas formas de letras;0;-1;-1
+PopCr;Pop Cronch Lonchera;1.85;Crocante y dulce en forma de divertidas esferas;0;-1;-1
+PopCC;Pop Cronch chocolate;1.9;Sabor a chocolate en forma de divertidas esferas;0;-1;-1
+Fruty;Fruty Aros Lonchera;1.8;Forma de divertidos aros de colores con sabor a frutas;0;-1;-1
+CornF;Corn Flakes de Kelloggs;1.75;Tu cereal de Confianza;0;-1;-1
+Zucar;Zucaritas Fun Size;1.85;¡Rrrrrrriquísimas!;0;-1;-1
+ChocZ;ChocoZucarits Fun Fize;1.99;¡Energía para ganar!;0;-1;-1
+Froot;Froot Loops Fun Size;1.99;¡Son Frutidiveridos!;0;-1;-1
+CornP;Corn Pops Fun Size;1.95;¡Necesito mis bolitas Corn Pops!;0;-1;-1
+PopTF;Pop Tarts Fresa (2 unidades);1.75;Delicia pegajosita para llevar;0;-1;-1
+PopTC;Pop Tarts Canela (2 unidades);1.75;Delicia pegajosita para llevar;0;-1;-1
+PopTA;Pop Tarts Arándano (2 unidades);1.75;Delicia pegajosita para llevar;0;-1;-1
