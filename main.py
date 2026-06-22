@@ -1,21 +1,39 @@
 # -----------------------------------------------
 # Archivo: main.py
 # Responsables: Paola Belgiovane e Ivana Lopez
-# Descripcion: Ejecucion del sistema
+# Descripcion: Punto de entrada del programa.
+#              Crea la maquina y la enciende.
 # -----------------------------------------------
 
+# Importamos la clase principal desde el controlador
 from controlador import MaquinaExpendedora
 
 def principal():
-    print("Iniciando el sistema de la Maquina Expendedora...")
+    """
+    Funcion principal del programa. Crea una instancia de la maquina
+    expendedora y arranca el bucle principal de interaccion con el usuario.
+
+    Al crear la instancia de MaquinaExpendedora se cargan automaticamente
+    los productos desde el archivo TXT local y los clientes desde GitHub.
+    Luego se inicia el motor (bucle while) que mantiene el programa vivo.
+
+    Eficiencia: O(1) en si misma, ya que solo instancia un objeto y llama
+    a un metodo. La carga de datos y el bucle principal corren dentro de
+    la clase MaquinaExpendedora.
+    """
+    print("========================================")
+    print(" INICIANDO SISTEMA EXPENDEDOR...")
+    print("========================================")
     
-    # Instanciamos la maquina
+    # 1. Creamos la maquina
+    #    (Al crearla ya se cargan los datos)
     mi_maquina = MaquinaExpendedora()
     
-    # Encendemos el motor
+    # 2. Encendemos el motor (bucle principal)
     mi_maquina.iniciar()
     
-    print("Programa finalizado.")
+    print("Programa finalizado correctamente.")
 
+# Le indicamos a Python que este es el archivo principal a ejecutar
 if __name__ == "__main__":
     principal()
